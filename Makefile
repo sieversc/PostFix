@@ -1,4 +1,4 @@
-SRCS =  LLStacks.C stackTestDriver.C 
+SRCS =  LLStacks.C Interface.C 
 EXEC = tester
 
 OBJS = $(SRCS:.C=.o)
