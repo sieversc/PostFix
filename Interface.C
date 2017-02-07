@@ -6,24 +6,28 @@ Written by Mikeyg
 
 #include <iostream>
 #include "LLStacks.h"
+#include "LLQueue.h"
 
 using namespace std;
-
-enum EntryCode {POP, PUSH, COUNT, TOP, PRINT, QUIT};
-
 
 int main () {
   // Declare some useful variables
   int response;
-
+  int temp;
 
   // Instantiate/construct a bucket object
   Stack slop;
+  LLQueue queue;
   
   // Get the user's intention
-  cout << "\nEnter 0: withdraw(pop)\n 1: deposit(push)\n 2: stack load(numberOfItems)\n 3: top\n 4: print stack\n enter code: ";
+  cout << "Enter Post-Fix equation to evaluate: ";
   cin >> response;
-  
-  cout << endl << endl;
+
+  queue.Enqueue(response);
+
+  queue.Dequeue(temp);
+
+  cout << temp;
   return(0);
 }
+
