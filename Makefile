@@ -1,5 +1,5 @@
-SRCS =  LLStacks.C Interface.C 
-EXEC = tester
+SRCS =  LLStacks.C LLQueue.C Interface.C 
+EXEC = calc
 
 OBJS = $(SRCS:.C=.o)
 
