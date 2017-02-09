@@ -14,6 +14,14 @@ string GetInputString();
 
 Queue ParseInputString(string inputString);
 
+int Calculate(Queue input);
+
+bool IsOperator(string character);
+
+/***************************************************************************
+
+****************************************************************************/
+
 int main () {
   // Declare some useful variables
   string temp;
@@ -26,12 +34,40 @@ int main () {
   string inputString = GetInputString();
 
   Queue queue = ParseInputString(inputString);
+}
 
+/*****************************************************************************************************
 
-  while(!queue.IsEmpty()){
-    queue.Dequeue(temp);
-    cout << temp << endl;
+******************************************************************************************************/
+
+int Calculate(Queue input){
+  int retValue;
+  Stack stack;
+  string character;
+  input.Dequeue(character);
+
+  if(!IsOperator(character)){
+    stack.Push(character);
   }
+  else{
+    bool foo = stack.Pop(character);
+    int a = atoi(character.c_str());
+
+    foo = stack.Pop(character);
+    int b = atoi(character.c_str());
+
+  }
+  return retValue;
+}
+
+bool IsOperator(string character){
+  bool retValue = true;
+  string ops = "+-/*%";
+  if(ops.find(character) == string::npos){
+    retValue = false;
+  }
+
+  return retValue;
 
 }
 
@@ -65,3 +101,4 @@ Queue ParseInputString(string inputString){
 
   return foo;
 }
+
