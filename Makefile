@@ -9,7 +9,7 @@ $(EXEC): $(OBJS)
 
 
 %.o : %.C
-	g++ -g -Wall -c $<
+	g++ -std=c++11 -g -Wall -c $<
 
 clean:
 	rm -f *.o *~ $(EXEC)
