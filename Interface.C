@@ -51,10 +51,10 @@ int Calculate(Queue input){
   }
   else{
     bool foo = stack.Pop(character);
-    int a = atoi(character.c_str());
+    int a = stoi(character);
 
-    foo = stack.Pop(character);
-    int b = atoi(character.c_str());
+    //foo = stack.Pop(character);
+    //int b = atoi(character.c_str());
 
   }
   return retValue;
