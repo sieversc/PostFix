@@ -7,6 +7,7 @@ Written by Mikeyg
 #include "LLStacks.h"
 #include <iostream>
 #include <cstdlib>
+#include <string>
 
 
 // ************************** Public Functions *********************

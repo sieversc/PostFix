@@ -12,26 +12,27 @@ using namespace std;
 
 string GetInputString();
 
+Queue ParseInputString(string inputString);
+
 int main () {
   // Declare some useful variables
-  int temp;
-  int response =1;
+  string temp;
 
   // Instantiate/construct a bucket object
   Stack stack;
-  Queue queue;
   
   // Get the user's intention
   cout << "Enter Post-Fix equation to evaluate: ";
   string inputString = GetInputString();
- 
-  queue.Enqueue(response);
-  stack.Push(response);
 
-  stack.Pop(temp);
-  queue.Dequeue(temp);
+  Queue queue = ParseInputString(inputString);
 
-  cout << temp;
+
+  while(!queue.IsEmpty()){
+    queue.Dequeue(temp);
+    cout << temp << endl;
+  }
+
 }
 
 string GetInputString(){
@@ -39,4 +40,28 @@ string GetInputString(){
   cout << "\n> ";
   getline(cin, response);
   return response;
+}
+
+Queue ParseInputString(string inputString){
+  Queue foo; 
+  string temp;
+  int location;
+
+  while(!inputString.empty()){
+
+    if(inputString.find(" ") != string::npos){
+
+      location = inputString.find(" ");
+      temp = inputString.substr(0, location);
+      foo.Enqueue(temp);
+      inputString.erase(0, location+1);
+    }
+
+    else{
+      foo.Enqueue(inputString);
+      inputString.clear();
+    }
+  }
+
+  return foo;
 }

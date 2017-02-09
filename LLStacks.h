@@ -9,12 +9,12 @@ of elements that the stack can contain.
 Written by Mikeyg
 ------------------------------------------------------------------*/
 
+#include <string>
 #include <iostream>
-
 using namespace std;
 
 // Definition of what the stack can store.
-typedef int sType;
+typedef string sType;
 
 // Definition of a stack node.
 struct StackNode {
