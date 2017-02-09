@@ -51,6 +51,7 @@ int Calculate(Queue input){
   }
   else{
     bool foo = stack.Pop(character);
+    
     int a = stoi(character);
 
     //foo = stack.Pop(character);
