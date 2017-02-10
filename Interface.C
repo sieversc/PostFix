@@ -30,41 +30,76 @@ int main () {
   Stack stack;
   
   // Get the user's intention
-  cout << "Enter Post-Fix equation to evaluate: ";
-  cout << "bananas" << endl;
-  
+  cout << "Enter equation to evaluate: ";
+ 
   string inputString = GetInputString();
 	
-  Queue queue = ParseInputString(inputString);
+  //Queue queue = ;
 
+  int retValue = Calculate(ParseInputString(inputString));
+
+	cout << "result: " << retValue << endl;
+/*********************************************************
+testers
+  
+
+  
+  while(!queue.IsEmpty()){
+  	bool foo = queue.Dequeue(temp);
+  	cout << IsOperator(temp) << endl;
+  }
  
+ *********************************************************/
 }
 
 /*****************************************************************************************************
-
+Methods that I will call from main to do all the magic
 ******************************************************************************************************/
 
 int Calculate(Queue input){
   int retValue;
+ 
+  bool foo;
   Stack stack;
   string character;
-  input.Dequeue(character);
 
-  if(!IsOperator(character)){
-    stack.Push(character);
-  }
-  else{
-    string op = character;
-    bool foo = stack.Pop(character);
-    int a = stoi(character);
+  while(!input.IsEmpty()){
 
-    foo = stack.Pop(character);
-    int b = stoi(character);
+	  foo = input.Dequeue(character);
 
-    if(character == "+"){
-      retValue = a + b;
+	  if(!IsOperator(character)){
+	    stack.Push(character);
+	  }
+
+	  else{
+	    string op = character;
+	    foo = stack.Pop(character);
+	    int a = stoi(character);
+
+	    foo = stack.Pop(character);
+	    int b = stoi(character);
+
+	    if(op == "+"){
+	      int c = a + b;
+	      stack.Push(to_string(c));
+ 	 }
+ 	 	if(op == "-"){
+	      int c = b - a;
+	      stack.Push(to_string(c));
+ 	 }
+ 	 	if(op == "*"){
+	      int c = a * b;
+	      stack.Push(to_string(c));
+ 	 }
+ 	 	if(op == "/"){
+ 	 		int c = b/a;
+ 	 		stack.Push(to_string(c));
+ 	 	}
     }
+ 
   }
+  foo = stack.Pop(character);
+  retValue = stoi(character);
   return retValue;
 }
 
