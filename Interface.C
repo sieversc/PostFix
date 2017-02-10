@@ -50,13 +50,16 @@ int Calculate(Queue input){
     stack.Push(character);
   }
   else{
+    string op = character;
     bool foo = stack.Pop(character);
-    
     int a = stoi(character);
 
-    //foo = stack.Pop(character);
-    //int b = atoi(character.c_str());
+    foo = stack.Pop(character);
+    int b = stoi(character);
 
+    if(character == "+"){
+      retValue = a + b;
+    }
   }
   return retValue;
 }
