@@ -22,6 +22,7 @@ bool IsOperator(string character);
 
 /***************************************************************************
 main method. gives the procedure of each input string
+
 ****************************************************************************/
 
 int main () {
