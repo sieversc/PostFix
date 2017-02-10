@@ -1,5 +1,7 @@
 /*------------------------------------------------------------------
+Implements linked list queues and stacks to perform mathematical operations
 
+written by Chris Sievers
 ------------------------------------------------------------------*/
 
 #include <iostream>
@@ -19,7 +21,7 @@ int Calculate(Queue input);
 bool IsOperator(string character);
 
 /***************************************************************************
-
+main method. gives the procedure of each input string
 ****************************************************************************/
 
 int main () {
@@ -38,16 +40,10 @@ int main () {
 
   int retValue = Calculate(ParseInputString(inputString));
 
-	cout << "result: " << retValue << endl;
+	cout << "= " << retValue << endl;
 /*********************************************************
 testers
-  
 
-  
-  while(!queue.IsEmpty()){
-  	bool foo = queue.Dequeue(temp);
-  	cout << IsOperator(temp) << endl;
-  }
  
  *********************************************************/
 }
@@ -56,6 +52,11 @@ testers
 Methods that I will call from main to do all the magic
 ******************************************************************************************************/
 
+/*****************************************************************************************************
+takes queue as input and performs the operations indicated in the input string
+preconditions: input queue must be in postfix notation
+postconditions: all operations performed and returns a single integer
+******************************************************************************************************/
 int Calculate(Queue input){
   int retValue;
  
@@ -64,7 +65,6 @@ int Calculate(Queue input){
   string character;
 
   while(!input.IsEmpty()){
-
 	  foo = input.Dequeue(character);
 
 	  if(!IsOperator(character)){
@@ -73,6 +73,7 @@ int Calculate(Queue input){
 
 	  else{
 	    string op = character;
+	    int c;
 	    foo = stack.Pop(character);
 	    int a = stoi(character);
 
@@ -80,29 +81,30 @@ int Calculate(Queue input){
 	    int b = stoi(character);
 
 	    if(op == "+"){
-	      int c = a + b;
-	      stack.Push(to_string(c));
+	      c = a + b;    
  	 }
  	 	if(op == "-"){
-	      int c = b - a;
-	      stack.Push(to_string(c));
+	      c = b - a;
  	 }
  	 	if(op == "*"){
-	      int c = a * b;
-	      stack.Push(to_string(c));
+	      c = a * b;
  	 }
  	 	if(op == "/"){
- 	 		int c = b/a;
- 	 		stack.Push(to_string(c));
- 	 	}
+ 	 		c = b/a;
+ 	 	} 
+ 	 stack.Push(to_string(c));
     }
- 
   }
   foo = stack.Pop(character);
   retValue = stoi(character);
   return retValue;
 }
 
+/*****************************************************************************************************
+will check a single string character to see if it is an operator or not
+preconditions: takes only strings of length 1
+postconditions: returns true if it is an operator. False if not
+******************************************************************************************************/
 bool IsOperator(string character){
   bool retValue = true;
   string ops = "+-/*%";
@@ -114,6 +116,11 @@ bool IsOperator(string character){
 
 }
 
+/*****************************************************************************************************
+allows user to input a string
+preconditions: none
+postconditions: returns a string exactly as the user typed it in
+******************************************************************************************************/
 string GetInputString(){
   string response;
   cout << "\n> ";
@@ -121,6 +128,11 @@ string GetInputString(){
   return response;
 }
 
+/*****************************************************************************************************
+splits the input string into substrings based on the spaces. ie) "12 14 +" becomes |12|14|+|
+preconditions: none. this will work on any string
+postconditions: outputs a linked list queue
+******************************************************************************************************/
 Queue ParseInputString(string inputString){
   Queue tempQ; 
   string temp;
