@@ -31,9 +31,13 @@ int main () {
   
   // Get the user's intention
   cout << "Enter Post-Fix equation to evaluate: ";
+  cout << "bananas" << endl;
+  
   string inputString = GetInputString();
-
+	
   Queue queue = ParseInputString(inputString);
+
+ 
 }
 
 /*****************************************************************************************************
@@ -83,7 +87,7 @@ string GetInputString(){
 }
 
 Queue ParseInputString(string inputString){
-  Queue foo; 
+  Queue tempQ; 
   string temp;
   int location;
 
@@ -93,16 +97,16 @@ Queue ParseInputString(string inputString){
 
       location = inputString.find(" ");
       temp = inputString.substr(0, location);
-      foo.Enqueue(temp);
+      tempQ.Enqueue(temp);
       inputString.erase(0, location+1);
     }
 
     else{
-      foo.Enqueue(inputString);
+      tempQ.Enqueue(inputString);
       inputString.clear();
     }
   }
 
-  return foo;
+  return tempQ;
 }
 
