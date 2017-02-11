@@ -67,6 +67,8 @@ A summary of the rules follows:
 7.  If the incoming symbol has lower precedence than the symbol on the top of the stack, pop the stack and print the top operator. Then test the incoming operator against the new top of stack.
 
 8.  At the end of the expression, pop and print all operators on the stack. (No parentheses should remain.)
+
+compare output from this method to http://www.meta-calculator.com/learning-lab/how-to-build-scientific-calculator/infix-to-postifix-convertor.php
 ******************************************************************************************************/
 Queue InfixToPostfix(Queue input){
   Queue postfix;
@@ -83,37 +85,52 @@ Queue InfixToPostfix(Queue input){
     }
     else{
 
-      if(stack.IsEmpty()){
+      if(stack.IsEmpty() || token == "("){
         stack.Push(token);
       }
+
+
       else{
         string top;
-        foo = stack.Top(top); 
-        int tokenWeight = GetOperatorWeight(token);
-        int topWeight = GetOperatorWeight(top);
 
-        //checks the relationship between the incoming operator and the current operator at the top of the stack. 
-        //different actions necessary for different relationships
-        if(tokenWeight == topWeight){
+        if(token == ")"){
           foo = stack.Pop(top);
-          postfix.Enqueue(top);
-          stack.Push(token);
-        }
-        if(tokenWeight > topWeight){
-          stack.Push(token);
-        }
-        if(tokenWeight < topWeight){
-          string temp;
-          while(!stack.IsEmpty() && (tokenWeight < topWeight || tokenWeight == topWeight)){//this takes care of left to right association 
-            foo = stack.Pop(temp);
-            postfix.Enqueue(temp);
-            foo = stack.Top(top);
+          while(top != "("){
+            
+            postfix.Enqueue(top);
+            foo = stack.Pop(top);
           }
-          stack.Push(token);
+        }
+
+        else{
+          foo = stack.Top(top); 
+          int tokenWeight = GetOperatorWeight(token);
+          int topWeight = GetOperatorWeight(top);
+          //checks the relationship between the incoming operator and the current operator at the top of the stack. 
+          //different actions necessary for different relationships
+          if(tokenWeight == topWeight){
+            foo = stack.Pop(top);
+            postfix.Enqueue(top);
+            stack.Push(token);
+          }
+          if(tokenWeight > topWeight){
+            stack.Push(token);
+          }
+          if(tokenWeight < topWeight){
+            string temp;
+            while(!stack.IsEmpty() && (tokenWeight < topWeight || tokenWeight == topWeight)){//this takes care of left to right association 
+              foo = stack.Pop(temp);
+              postfix.Enqueue(temp);
+              foo = stack.Top(top);
+            }
+            stack.Push(token);
+          }
         }
       }
     }
   }
+
+  //enqueue anything left in the stack
   while(!stack.IsEmpty()){
     foo = stack.Pop(token);
     postfix.Enqueue(token);
@@ -122,7 +139,7 @@ Queue InfixToPostfix(Queue input){
   return postfix;
 }
 int GetOperatorWeight(string op){
-  int weight;
+  int weight = -1;
   //assigns a weight based on the operator. % is higher than * or / 
   //because I'm not sure what weight it should actually have
   if(op == "+" || op == "-"){
@@ -198,21 +215,13 @@ postconditions: returns true if it is an operator. False if not
 ******************************************************************************************************/
 bool IsOperator(string character){
   bool retValue = true;
-  string ops = "+-/*%";
+  string ops = "+-/*%()";
   if(ops.find(character) == string::npos){
     retValue = false;
   }
 
   return retValue;
 
-}
-
-bool HasHigherPrecedence(string a, string b){
-  bool retValue = false;
-
-  
-
-  return retValue;
 }
 
 /*****************************************************************************************************
