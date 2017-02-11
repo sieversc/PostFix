@@ -77,6 +77,7 @@ Queue InfixToPostfix(Queue input){
   while(!input.IsEmpty()){
     foo = input.Dequeue(token);
 
+    //first check whether the dequeued item is a number. if it is, it immediately goes on the new queue
     if(!IsOperator(token)){
       postfix.Enqueue(token);
     }
@@ -85,19 +86,31 @@ Queue InfixToPostfix(Queue input){
       if(stack.IsEmpty()){
         stack.Push(token);
       }
-      string top;
-      foo = stack.Top(top);      
-      if(GetOperatorWeight(token) > GetOperatorWeight(top)){
-        stack.Push(token);
-      }
-      if(GetOperatorWeight(token) < GetOperatorWeight(top)){
-        string temp;
-        while(GetOperatorWeight(token) < GetOperatorWeight(top)){
-          foo = stack.Pop(temp);
-          postfix.Enqueue(temp);
-          foo = stack.Top(top);
+      else{
+        string top;
+        foo = stack.Top(top); 
+        int tokenWeight = GetOperatorWeight(token);
+        int topWeight = GetOperatorWeight(top);
+
+        //checks the relationship between the incoming operator and the current operator at the top of the stack. 
+        //different actions necessary for different relationships
+        if(tokenWeight == topWeight){
+          foo = stack.Pop(top);
+          postfix.Enqueue(top);
+          stack.Push(token);
         }
-        stack.Push(token);
+        if(tokenWeight > topWeight){
+          stack.Push(token);
+        }
+        if(tokenWeight < topWeight){
+          string temp;
+          while(!stack.IsEmpty() && (tokenWeight < topWeight || tokenWeight == topWeight)){//this takes care of left to right association 
+            foo = stack.Pop(temp);
+            postfix.Enqueue(temp);
+            foo = stack.Top(top);
+          }
+          stack.Push(token);
+        }
       }
     }
   }
