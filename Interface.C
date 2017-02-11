@@ -20,39 +20,94 @@ int Calculate(Queue input);
 
 bool IsOperator(string character);
 
+int GetOperatorWeight(string op);
+
+Queue InfixToPostfix(Queue input);
+
 /***************************************************************************
 main method. gives the procedure of each input string
 
 ****************************************************************************/
 
 int main () {
-  // Declare some useful variables
-  string temp;
 
-  // Instantiate/construct a bucket object
-  Stack stack;
-  
-  // Get the user's intention
-  cout << "Enter equation to evaluate: ";
+  // Get a string from the user to evaluate
+  cout << "Enter equation to evaluate: " << endl;
  
   string inputString = GetInputString();
-	
-  //Queue queue = ;
 
-  int retValue = Calculate(ParseInputString(inputString));
+  //int retValue = Calculate(InfixToPostfix(ParseInputString(inputString)));
 
-	cout << "= " << retValue << endl;
-/*********************************************************
-testers
+  Queue queue = InfixToPostfix(ParseInputString(inputString));
 
- 
- *********************************************************/
+  while(!queue.IsEmpty()){
+    string temp;
+    bool foo = queue.Dequeue(temp);
+    cout << temp << endl;
+  }
+
+  //cout << endl << "=  " << retValue << endl;
 }
 
 /*****************************************************************************************************
-Methods that I will call from main to do all the magic
+Below main are all the Methods that I will call from main to do all the magic
 ******************************************************************************************************/
+Queue InfixToPostfix(Queue input){
+  Queue postfix;
+  string token;
+  bool foo;
+  Stack stack;
 
+  while(!input.IsEmpty()){
+    foo = input.Dequeue(token);
+
+    if(!IsOperator(token)){
+      postfix.Enqueue(token);
+    }
+    else{
+
+      if(stack.IsEmpty()){
+        stack.Push(token);
+      }
+      string top;
+      foo = stack.Top(top);      
+      if(GetOperatorWeight(token) > GetOperatorWeight(top)){
+        stack.Push(token);
+      }
+      if(GetOperatorWeight(token) < GetOperatorWeight(top)){
+        string temp;
+        while(GetOperatorWeight(token) < GetOperatorWeight(top)){
+          foo = stack.Pop(temp);
+          postfix.Enqueue(temp);
+          foo = stack.Top(top);
+        }
+        stack.Push(token);
+      }
+    }
+  }
+  while(!stack.IsEmpty()){
+    foo = stack.Pop(token);
+    postfix.Enqueue(token);
+  }
+
+  return postfix;
+}
+int GetOperatorWeight(string op){
+  int weight;
+  //assigns a weight based on the operator. % is higher than * or / 
+  //because I'm not sure what weight it should actually have
+  if(op == "+" || op == "-"){
+    weight = 0;
+  }
+  if(op == "*" || op == "/"){
+    weight = 1;
+  }
+  if(op == "%"){
+    weight = 2;
+  }
+  
+  return weight;
+}
 /*****************************************************************************************************
 takes queue as input and performs the operations indicated in the input string
 preconditions: input queue must be in postfix notation
@@ -68,10 +123,13 @@ int Calculate(Queue input){
   while(!input.IsEmpty()){
 	  foo = input.Dequeue(character);
 
+    //check if the dequeued element is an integer
 	  if(!IsOperator(character)){
 	    stack.Push(character);
 	  }
 
+    //if not an integer, it's an operator
+    //pop twice and perform the operation. push result back onto stack
 	  else{
 	    string op = character;
 	    int c;
@@ -83,18 +141,21 @@ int Calculate(Queue input){
 
 	    if(op == "+"){
 	      c = a + b;    
- 	 }
- 	 	if(op == "-"){
-	      c = b - a;
- 	 }
- 	 	if(op == "*"){
-	      c = a * b;
- 	 }
- 	 	if(op == "/"){
- 	 		c = b/a;
- 	 	} 
- 	 stack.Push(to_string(c));
-    }
+   	 }
+   	 	if(op == "-"){
+  	      c = b - a;
+   	 }
+   	 	if(op == "*"){
+  	      c = a * b;
+   	 }
+   	 	if(op == "/"){
+   	 		c = b/a;
+   	 	} 
+      if(op == "%"){
+        c = b%a;
+      }
+   	 stack.Push(to_string(c));
+      }
   }
   foo = stack.Pop(character);
   retValue = stoi(character);
@@ -117,6 +178,14 @@ bool IsOperator(string character){
 
 }
 
+bool HasHigherPrecedence(string a, string b){
+  bool retValue = false;
+
+  
+
+  return retValue;
+}
+
 /*****************************************************************************************************
 allows user to input a string
 preconditions: none
@@ -135,8 +204,8 @@ preconditions: none. this will work on any string
 postconditions: outputs a linked list queue
 ******************************************************************************************************/
 Queue ParseInputString(string inputString){
-  Queue tempQ; 
-  string temp;
+  Queue topQ; 
+  string top;
   int location;
 
   while(!inputString.empty()){
@@ -144,17 +213,17 @@ Queue ParseInputString(string inputString){
     if(inputString.find(" ") != string::npos){
 
       location = inputString.find(" ");
-      temp = inputString.substr(0, location);
-      tempQ.Enqueue(temp);
+      top = inputString.substr(0, location);
+      topQ.Enqueue(top);
       inputString.erase(0, location+1);
     }
 
     else{
-      tempQ.Enqueue(inputString);
+      topQ.Enqueue(inputString);
       inputString.clear();
     }
   }
 
-  return tempQ;
+  return topQ;
 }
 
