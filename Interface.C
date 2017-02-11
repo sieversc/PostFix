@@ -25,7 +25,8 @@ int GetOperatorWeight(string op);
 Queue InfixToPostfix(Queue input);
 
 /***************************************************************************
-main method. gives the procedure of each input string
+main method. gives the procedure each input string will follow in order to evaluate
+the expression.
 
 ****************************************************************************/
 
@@ -36,17 +37,10 @@ int main () {
  
   string inputString = GetInputString();
 
-  //int retValue = Calculate(InfixToPostfix(ParseInputString(inputString)));
+  int retValue = Calculate(InfixToPostfix(ParseInputString(inputString)));
 
-  Queue queue = InfixToPostfix(ParseInputString(inputString));
+  cout << endl << "=    " << retValue << endl;
 
-  while(!queue.IsEmpty()){
-    string temp;
-    bool foo = queue.Dequeue(temp);
-    cout << temp << endl;
-  }
-
-  //cout << endl << "=  " << retValue << endl;
 }
 
 /*****************************************************************************************************
@@ -59,6 +53,9 @@ int main () {
 >  If the incoming symbol has lower precedence than the symbol on the top of the stack, pop the stack and enqueue the popped operator. Then test the incoming operator against the new top of stack
 >  at end of inputString, pop and print all operators on the stack
 > compare output from this method to http://www.meta-calculator.com/learning-lab/how-to-build-scientific-calculator/infix-to-postifix-convertor.php
+
+Preconditions: takes a string in Infix notation
+Postconditions: outputs string in Postfix notation
 ******************************************************************************************************/
 Queue InfixToPostfix(Queue input){
   Queue postfix;
@@ -133,7 +130,10 @@ Queue InfixToPostfix(Queue input){
 }
 
 /****************************************************************************************************
-
+here is where I assign precedences to the operators. This determines in what order they will be executed in InfixToPostFix()
+note that by default, weight is -1 and there is no check for () as inputs. this means that they will default to weight = -1
+preconditions: none but really only useful if input string is an operator or ()
+postconditions: outputs an integer corresponding to the input. 
 ******************************************************************************************************/
 int GetOperatorWeight(string op){
   int weight = -1;
