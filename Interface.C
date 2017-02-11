@@ -50,25 +50,15 @@ int main () {
 }
 
 /*****************************************************************************************************
-A summary of the rules follows:
-
-1.  Print operands as they arrive.
-
-2.  If the stack is empty or contains a left parenthesis on top, push the incoming operator onto the stack.
-
-3.  If the incoming symbol is a left parenthesis, push it on the stack.
-
-4.  If the incoming symbol is a right parenthesis, pop the stack and print the operators until you see a left parenthesis. Discard the pair of parentheses.
-
-5.  If the incoming symbol has higher precedence than the top of the stack, push it on the stack.
-
-6.  If the incoming symbol has equal precedence with the top of the stack, use association. If the association is left to right, pop and print the top of the stack and then push the incoming operator. If the association is right to left, push the incoming operator.
-
-7.  If the incoming symbol has lower precedence than the symbol on the top of the stack, pop the stack and print the top operator. Then test the incoming operator against the new top of stack.
-
-8.  At the end of the expression, pop and print all operators on the stack. (No parentheses should remain.)
-
-compare output from this method to http://www.meta-calculator.com/learning-lab/how-to-build-scientific-calculator/infix-to-postifix-convertor.php
+>  Enqueue integers as soon as they're dequeued
+>  If the stack is empty or contains a left parenthesis on top, push the incoming operator onto the stack
+>  If the incoming symbol is a left parenthesis, push it on the stack
+>  If the incoming symbol is a right parenthesis, pop the stack and enqueue all operators until you see a left parenthesis. Discard the pair of parentheses
+>  If the incoming symbol has higher precedence than the top of the stack, push it on the stack
+>  If the incoming symbol has equal precedence with the top of the stack, use association
+>  If the incoming symbol has lower precedence than the symbol on the top of the stack, pop the stack and enqueue the popped operator. Then test the incoming operator against the new top of stack
+>  at end of inputString, pop and print all operators on the stack
+> compare output from this method to http://www.meta-calculator.com/learning-lab/how-to-build-scientific-calculator/infix-to-postifix-convertor.php
 ******************************************************************************************************/
 Queue InfixToPostfix(Queue input){
   Queue postfix;
@@ -84,15 +74,15 @@ Queue InfixToPostfix(Queue input){
       postfix.Enqueue(token);
     }
     else{
-
+      //we want to push ( onto the stack as if it were empty. this is important because order of operation depends on this
       if(stack.IsEmpty() || token == "("){
         stack.Push(token);
       }
 
-
+      //if stack isn't empty, comparisons between incoming operator and operators on stack already need to be made
       else{
         string top;
-
+      //keep an eye out for ) it needs to be handled before anything else
         if(token == ")"){
           foo = stack.Pop(top);
           while(top != "("){
@@ -106,29 +96,32 @@ Queue InfixToPostfix(Queue input){
           foo = stack.Top(top); 
           int tokenWeight = GetOperatorWeight(token);
           int topWeight = GetOperatorWeight(top);
+
           //checks the relationship between the incoming operator and the current operator at the top of the stack. 
           //different actions necessary for different relationships
+          //if tokenWeight > topWeight, we just want to push it onto the stack. No other action necessary.
           if(tokenWeight == topWeight){
             foo = stack.Pop(top);
             postfix.Enqueue(top);
-            stack.Push(token);
+            //stack.Push(token);
           }
-          if(tokenWeight > topWeight){
-            stack.Push(token);
-          }
+
           if(tokenWeight < topWeight){
             string temp;
-            while(!stack.IsEmpty() && (tokenWeight < topWeight || tokenWeight == topWeight)){//this takes care of left to right association 
+            //below takes care of left to right association and makes sure you don't push a lower-weighted operator
+            //on top of a higher-weighted one.
+            while(!stack.IsEmpty() && GetOperatorWeight(token) <= GetOperatorWeight(top)){ 
               foo = stack.Pop(temp);
               postfix.Enqueue(temp);
               foo = stack.Top(top);
             }
+          }
+            //in every case, a push needs to be made 
             stack.Push(token);
           }
         }
       }
     }
-  }
 
   //enqueue anything left in the stack
   while(!stack.IsEmpty()){
@@ -138,6 +131,10 @@ Queue InfixToPostfix(Queue input){
 
   return postfix;
 }
+
+/****************************************************************************************************
+
+******************************************************************************************************/
 int GetOperatorWeight(string op){
   int weight = -1;
   //assigns a weight based on the operator. % is higher than * or / 
