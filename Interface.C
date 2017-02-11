@@ -37,6 +37,7 @@ int main () {
  
   string inputString = GetInputString();
 
+  //parse the equation, convert it to infix notation. Note if inputString is already in infix, it will still calculate just fine
   int retValue = Calculate(InfixToPostfix(ParseInputString(inputString)));
 
   cout << endl << "=    " << retValue << endl;
