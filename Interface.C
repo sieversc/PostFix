@@ -92,39 +92,57 @@ Queue InfixToPostfix(Queue input){
 
       else{
         string top;
+        foo = stack.Top(top); 
+        int tokenWeight = GetOperatorWeight(token);
+        int topWeight = GetOperatorWeight(top);
 
         if(token == ")"){
-          foo = stack.Pop(top);
-          while(top != "("){
-            
-            postfix.Enqueue(top);
-            foo = stack.Pop(top);
+          foo = stack.Pop(token);
+          while(token != "("){
+            if(!IsOperator(token)){
+              postfix.Enqueue(token);
+            }
+            if(tokenWeight == tokenWeight){
+              foo = stack.Pop(token);
+              postfix.Enqueue(token);
+              stack.Push(token);
+            }
+            if(tokenWeight > tokenWeight){
+              stack.Push(token);
+            }
+            if(tokenWeight < tokenWeight){
+              string temp;
+              while(!stack.IsEmpty() && (tokenWeight < tokenWeight || tokenWeight == tokenWeight)){//this takes care of left to right association 
+                foo = stack.Pop(temp);
+                postfix.Enqueue(temp);
+                foo = stack.Top(token);
+              }
+            }
           }
         }
 
-        else{
-          foo = stack.Top(top); 
-          int tokenWeight = GetOperatorWeight(token);
-          int topWeight = GetOperatorWeight(top);
+
+
+
+
           //checks the relationship between the incoming operator and the current operator at the top of the stack. 
           //different actions necessary for different relationships
-          if(tokenWeight == topWeight){
-            foo = stack.Pop(top);
-            postfix.Enqueue(top);
+          if(tokenWeight == tokenWeight){
+            foo = stack.Pop(token);
+            postfix.Enqueue(token);
             stack.Push(token);
           }
-          if(tokenWeight > topWeight){
+          if(tokenWeight > tokenWeight){
             stack.Push(token);
           }
-          if(tokenWeight < topWeight){
+          if(tokenWeight < tokenWeight){
             string temp;
-            while(!stack.IsEmpty() && (tokenWeight < topWeight || tokenWeight == topWeight)){//this takes care of left to right association 
+            while(!stack.IsEmpty() && (tokenWeight < tokenWeight || tokenWeight == tokenWeight)){//this takes care of left to right association 
               foo = stack.Pop(temp);
               postfix.Enqueue(temp);
               foo = stack.Top(top);
             }
             stack.Push(token);
-          }
         }
       }
     }
