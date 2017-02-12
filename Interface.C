@@ -12,46 +12,138 @@ written by Chris Sievers
 
 using namespace std;
 
-string GetInputString();
-
-Queue ParseInputString(string inputString);
-
-int Calculate(Queue input);
-
 bool IsOperator(string character);
-
-int GetOperatorWeight(string op);
-
-Queue InfixToPostfix(Queue input);
-
 bool SameCharType(string a, string b);
+int Calculate(Queue input);
+int GetOperatorWeight(string op);
+Queue InfixToPostfix(Queue input);
+Queue ParseInputString(string inputString);
+string GetInputString();
 
 /***************************************************************************
 main method. gives the procedure each input string will follow in order to evaluate
 the expression.
-
 ****************************************************************************/
 
 int main () {
 
   // Get a string from the user to evaluate
   cout << "Enter equation to evaluate: " << endl;
- /*
-  Queue inputString = ParseInputString(GetInputString());
-
-  while(!inputString.IsEmpty()){
-    string temp;
-    bool foo = inputString.Dequeue(temp);
-    cout << temp << endl;
-  }
-*/
 
   string inputString = GetInputString();
-  //parse the equation, convert it to infix notation. Note if inputString is already in infix, it will still calculate just fine
-  int retValue = Calculate(InfixToPostfix(ParseInputString(inputString)));
+  
+   //parse the equation, convert it to infix notation, then evaluate. Note if inputString is already in infix, it will still calculate just fine
+  cout << endl << "=  " << Calculate(InfixToPostfix(ParseInputString(inputString))) << endl;
 
-  cout << endl << "=  " << retValue << endl;
+}
 
+/*****************************************************************************************************
+will check a single string character to see if it is an operator or not
+preconditions: takes only strings of length 1
+postconditions: returns true if it is an operator. False if not
+******************************************************************************************************/
+bool IsOperator(string character){
+  bool retValue = true;
+  string ops = "+-/*%()";
+  if(ops.find(character) == string::npos){
+    retValue = false;
+  }
+
+  return retValue;
+}
+
+/********************************************************************
+checks whether two strings are both operators or both integers. Compares the weight of both characters 
+preconditions: none. just takes any two strings as arguments
+postconditions: none. returns true or false based on a comparison. does not change values
+*********************************************************************/
+bool SameCharType(string a, string b){
+  bool retValue = false;
+
+  if(GetOperatorWeight(a) == GetOperatorWeight(b)){
+    retValue = true;
+  }
+  return retValue;
+}
+/*****************************************************************************************************
+takes queue as input and performs the operations indicated in the input string
+preconditions: input queue must be in postfix notation
+postconditions: all operations performed and returns a single integer
+******************************************************************************************************/
+int Calculate(Queue input){
+  int retValue;
+ 
+  bool foo;
+  Stack stack;
+  string character;
+
+  while(!input.IsEmpty()){
+    foo = input.Dequeue(character);
+
+    //check if the dequeued element is an integer
+    if(!IsOperator(character)){
+      stack.Push(character);
+    }
+
+    //if not an integer, it's an operator
+    //pop twice and perform the operation. push result back onto stack
+    else{
+      string op = character;
+      int c;
+      foo = stack.Pop(character);
+      int a = stoi(character);
+
+      foo = stack.Pop(character);
+      int b = stoi(character);
+
+      if(op == "+"){
+        c = a + b;    
+     }
+      if(op == "-"){
+          c = b - a;
+     }
+      if(op == "*"){
+          c = a * b;
+     }
+      if(op == "/"){
+        c = b/a;
+      } 
+      if(op == "%"){
+        c = b%a;
+      }
+     stack.Push(to_string(c));
+      }
+  }
+  foo = stack.Pop(character);
+  retValue = stoi(character);
+  return retValue;
+}
+
+/****************************************************************************************************
+here is where I assign precedences to the operators. This determines in what order they will be executed in InfixToPostFix(). This is also used by SameCharType
+to compare 2 strings
+
+preconditions: none any string is accepted and will return a number
+postconditions: outputs an integer corresponding to the input. 
+******************************************************************************************************/
+int GetOperatorWeight(string op){
+  int weight = -2;
+  //assigns a weight based on the operator. % is higher than * or / 
+  //because I'm not sure what weight it should actually have
+  if(op == "(" || op == ")"){
+    weight = -1;
+  }
+  if(op == "+" || op == "-"){
+    weight = 0;
+  }
+  if(op == "*" || op == "/"){
+    weight = 1;
+  }
+  if(op == "%"){
+    weight = 2;
+  }
+  
+  return weight;
 }
 
 /*****************************************************************************************************
@@ -63,7 +155,7 @@ int main () {
 >  If the incoming symbol has equal precedence with the top of the stack, use association
 >  If the incoming symbol has lower precedence than the symbol on the top of the stack, pop the stack and enqueue the popped operator. Then test the incoming operator against the new top of stack
 >  at end of inputString, pop and print all operators on the stack
-> compare output from this method to http://www.meta-calculator.com/learning-lab/how-to-build-scientific-calculator/infix-to-postifix-convertor.php
+>  compare output from this method to result from online calculator: http://www.meta-calculator.com/learning-lab/how-to-build-scientific-calculator/infix-to-postifix-convertor.php
 
 Preconditions: takes a string in Infix notation
 Postconditions: outputs string in Postfix notation
@@ -140,110 +232,6 @@ Queue InfixToPostfix(Queue input){
   return postfix;
 }
 
-/****************************************************************************************************
-here is where I assign precedences to the operators. This determines in what order they will be executed in InfixToPostFix()
-note that by default, weight is -1 and there is no check for () as inputs. this means that they will default to weight = -1
-preconditions: none but really only useful if input string is an operator or ()
-postconditions: outputs an integer corresponding to the input. 
-******************************************************************************************************/
-int GetOperatorWeight(string op){
-  int weight = -1;
-  //assigns a weight based on the operator. % is higher than * or / 
-  //because I'm not sure what weight it should actually have
-  if(op == "+" || op == "-"){
-    weight = 0;
-  }
-  if(op == "*" || op == "/"){
-    weight = 1;
-  }
-  if(op == "%"){
-    weight = 2;
-  }
-  
-  return weight;
-}
-/*****************************************************************************************************
-takes queue as input and performs the operations indicated in the input string
-preconditions: input queue must be in postfix notation
-postconditions: all operations performed and returns a single integer
-******************************************************************************************************/
-int Calculate(Queue input){
-  int retValue;
- 
-  bool foo;
-  Stack stack;
-  string character;
-
-  while(!input.IsEmpty()){
-	  foo = input.Dequeue(character);
-
-    //check if the dequeued element is an integer
-	  if(!IsOperator(character)){
-	    stack.Push(character);
-	  }
-
-    //if not an integer, it's an operator
-    //pop twice and perform the operation. push result back onto stack
-	  else{
-	    string op = character;
-	    int c;
-	    foo = stack.Pop(character);
-	    int a = stoi(character);
-
-	    foo = stack.Pop(character);
-	    int b = stoi(character);
-
-	    if(op == "+"){
-	      c = a + b;    
-   	 }
-   	 	if(op == "-"){
-  	      c = b - a;
-   	 }
-   	 	if(op == "*"){
-  	      c = a * b;
-   	 }
-   	 	if(op == "/"){
-   	 		c = b/a;
-   	 	} 
-      if(op == "%"){
-        c = b%a;
-      }
-   	 stack.Push(to_string(c));
-      }
-  }
-  foo = stack.Pop(character);
-  retValue = stoi(character);
-  return retValue;
-}
-
-/*****************************************************************************************************
-will check a single string character to see if it is an operator or not
-preconditions: takes only strings of length 1
-postconditions: returns true if it is an operator. False if not
-******************************************************************************************************/
-bool IsOperator(string character){
-  bool retValue = true;
-  string ops = "+-/*%()";
-  if(ops.find(character) == string::npos){
-    retValue = false;
-  }
-
-  return retValue;
-
-}
-
-/*****************************************************************************************************
-allows user to input a string
-preconditions: none
-postconditions: returns a string exactly as the user typed it in
-******************************************************************************************************/
-string GetInputString(){
-  string response;
-  cout << "\n> ";
-  getline(cin, response);
-  return response;
-}
-
 /*****************************************************************************************************
 splits the input string into substrings based on the spaces. ie) "12 14 +" becomes |12|14|+|
 preconditions: none. this will work on any string
@@ -254,36 +242,53 @@ Queue ParseInputString(string inputString){
   string top;
   int location;
 
-  //check if the input string is delimited by spaces. 
-  //if not - there are no spaces in the string, use operators to separate each character
+  //can parse a string delimited by spaces and one that is not. First Check which one was passed in as inputString
+  //if not delimited by spaces, there will be no spaces throughout the whole string
   if(inputString.find(" ") == string::npos){
     string elem;
     string nextElem;
+
+    /*****************************************************************************
+      > Look at each element in the input string.
+      > for any given element, if the next character is of a different type --> enqueue it
+        > so 3+5 gets enqueued as |3|+|5|
+      > if they are the same weight, we have a multiple digit integer. loop through and get a substring
+        with all the digits of this integer then enqueue the whole substring
+      > Note parentheses are not a problem here because SameCharType() compares the weights of each character
+        and parentheses are of weight -1, integers are -2, all other operators > -1
+    *****************************************************************************/
     for(int i = 0; i < inputString.length(); i++){
       elem = inputString.at(i);
       nextElem = "null";
+
       if(i+1 < inputString.length()){
         nextElem = inputString.at(i+1);
       }
+
       if(!SameCharType(elem, nextElem) || nextElem == "null"){
         parsedQ.Enqueue(elem);
       }
+
       if(SameCharType(elem, nextElem) && nextElem != "null"){
         int length;
         int j = 1;
         nextElem = inputString.at(i+j);
-        while(i+j<inputString.length() && SameCharType(elem, nextElem)){
+
+        while(i+j < inputString.length() && SameCharType(elem, nextElem)){
           length = j+1;
           j++;
           nextElem = inputString.at(i+j);
         }
         string token = inputString.substr(i, length);
         parsedQ.Enqueue(token);
-        i = length + i - 1;
+
+        /*  pick up in the for loop indexed by i just after the multiple digit integer we just enqueued
+            -1 because this is the end of the for loop indexed by i and will increment immediately after. */
+        i = length + i - 1;     
       }
     }
   }
-
+//This is a much simpler parsing job. this takes a string delimited by spaces and breaks it up that way
   else{
     while(!inputString.empty()){
 
@@ -295,6 +300,7 @@ Queue ParseInputString(string inputString){
         inputString.erase(0, location+1);
       }
 
+      //if test above returns false, we have reached the end of the inputString. Enqueue remaining characters and clear the string
       else{
         parsedQ.Enqueue(inputString);
         inputString.clear();
@@ -305,20 +311,18 @@ Queue ParseInputString(string inputString){
   return parsedQ;
 }
 
-/********************************************************************
-checks whether two strings are both operators or both integers. 
-preconditions: none. just takes any two strings as arguments
-postconditions: none. returns true or false based on a comparison. does not change values
-*********************************************************************/
-bool SameCharType(string a, string b){
-  bool retValue = false;
+/*****************************************************************************************************
+allows user to input a string. This string must be in infix or postfix notation otherwise the parse method may
+not know what to do with it
 
-  if(IsOperator(a) && IsOperator(b)){
-    retValue = true;
-  }
-  if(!IsOperator(a) && !IsOperator(b)){
-    retValue = true;
-  }
-
-  return retValue;
+preconditions: string must be in infix or postfix notation
+postconditions: returns a string exactly as the user typed it in
+******************************************************************************************************/
+string GetInputString(){
+  string response;
+  cout << "\n> ";
+  getline(cin, response);
+  return response;
 }
+
+
