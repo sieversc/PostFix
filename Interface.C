@@ -36,13 +36,21 @@ int main () {
 
   // Get a string from the user to evaluate
   cout << "Enter equation to evaluate: " << endl;
- 
-  string inputString = GetInputString();
+ /*
+  Queue inputString = ParseInputString(GetInputString());
 
+  while(!inputString.IsEmpty()){
+    string temp;
+    bool foo = inputString.Dequeue(temp);
+    cout << temp << endl;
+  }
+*/
+
+  string inputString = GetInputString();
   //parse the equation, convert it to infix notation. Note if inputString is already in infix, it will still calculate just fine
   int retValue = Calculate(InfixToPostfix(ParseInputString(inputString)));
 
-  cout << endl << "=    " << retValue << endl;
+  cout << endl << "=  " << retValue << endl;
 
 }
 
@@ -259,6 +267,19 @@ Queue ParseInputString(string inputString){
       }
       if(!SameCharType(elem, nextElem) || nextElem == "null"){
         parsedQ.Enqueue(elem);
+      }
+      if(SameCharType(elem, nextElem) && nextElem != "null"){
+        int length;
+        int j = 1;
+        nextElem = inputString.at(i+j);
+        while(i+j<inputString.length() && SameCharType(elem, nextElem)){
+          length = j+1;
+          j++;
+          nextElem = inputString.at(i+j);
+        }
+        string token = inputString.substr(i, length);
+        parsedQ.Enqueue(token);
+        i = length + i - 1;
       }
     }
   }
