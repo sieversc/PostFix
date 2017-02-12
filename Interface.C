@@ -24,6 +24,8 @@ int GetOperatorWeight(string op);
 
 Queue InfixToPostfix(Queue input);
 
+bool SameCharType(string a, string b);
+
 /***************************************************************************
 main method. gives the procedure each input string will follow in order to evaluate
 the expression.
@@ -240,26 +242,62 @@ preconditions: none. this will work on any string
 postconditions: outputs a linked list queue
 ******************************************************************************************************/
 Queue ParseInputString(string inputString){
-  Queue topQ; 
+  Queue parsedQ; 
   string top;
   int location;
 
-  while(!inputString.empty()){
-
-    if(inputString.find(" ") != string::npos){
-
-      location = inputString.find(" ");
-      top = inputString.substr(0, location);
-      topQ.Enqueue(top);
-      inputString.erase(0, location+1);
-    }
-
-    else{
-      topQ.Enqueue(inputString);
-      inputString.clear();
+  //check if the input string is delimited by spaces. 
+  //if not - there are no spaces in the string, use operators to separate each character
+  if(inputString.find(" ") == string::npos){
+    string elem;
+    string nextElem;
+    for(int i = 0; i < inputString.length(); i++){
+      elem = inputString.at(i);
+      nextElem = "null";
+      if(i+1 < inputString.length()){
+        nextElem = inputString.at(i+1);
+      }
+      if(!SameCharType(elem, nextElem) || nextElem == "null"){
+        parsedQ.Enqueue(elem);
+      }
     }
   }
 
-  return topQ;
+  else{
+    while(!inputString.empty()){
+
+      if(inputString.find(" ") != string::npos){
+
+        location = inputString.find(" ");
+        top = inputString.substr(0, location);
+        parsedQ.Enqueue(top);
+        inputString.erase(0, location+1);
+      }
+
+      else{
+        parsedQ.Enqueue(inputString);
+        inputString.clear();
+      }
+    }
+  }
+
+  return parsedQ;
 }
 
+/********************************************************************
+checks whether two strings are both operators or both integers. 
+preconditions: none. just takes any two strings as arguments
+postconditions: none. returns true or false based on a comparison. does not change values
+*********************************************************************/
+bool SameCharType(string a, string b){
+  bool retValue = false;
+
+  if(IsOperator(a) && IsOperator(b)){
+    retValue = true;
+  }
+  if(!IsOperator(a) && !IsOperator(b)){
+    retValue = true;
+  }
+
+  return retValue;
+}
