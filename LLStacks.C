@@ -2,6 +2,7 @@
 A standard stack implementation using a linked list implementation.
 
 Written by Mikeyg
+    ^ left this intentionally. I didn't edit it, just downloaded from canvas
 ------------------------------------------------------------------*/
 
 #include "LLStacks.h"

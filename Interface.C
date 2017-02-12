@@ -1,5 +1,22 @@
 /*------------------------------------------------------------------
-Implements linked list queues and stacks to perform mathematical operations
+Implements linked list queues and stacks to perform mathematical operations. 
+Supports:
+  > +,-,*,/,%,^
+    > + addition
+    > - subtraction
+    > * multiplication
+    > / division
+    > % modulo
+    > ^ exponentiation
+  > parentheses
+  > inputs in postfix notation          ex) 1 2 +   = 3
+    > supports negative numbers as inputs
+  > inputs in infix notation            ex) 1 + 2   = 3
+    > supports negative numbers as inputs
+  > Infix Inputs without spaces         ex) 1+2     = 3
+    > does not support negative numbers as inputs
+    > parentheses work though           ex) (1+2)*3 = 9
+
 
 written by Chris Sievers
 ------------------------------------------------------------------*/
@@ -9,16 +26,17 @@ written by Chris Sievers
 #include "LLStacks.h"
 #include "LLQueue.h"
 #include <cstdlib>
+#include <math.h>
 
 using namespace std;
 
-bool IsOperator(string character);
-bool SameCharType(string a, string b);
-int Calculate(Queue input);
-int GetOperatorWeight(string op);
-Queue InfixToPostfix(Queue input);
-Queue ParseInputString(string inputString);
-string GetInputString();
+bool    IsOperator        (string character);       //will check a single string character to see if it is an operator or not
+bool    SameCharType      (string a, string b);     //checks whether two strings are both operators or both integers. Compares the weight of both characters
+int     Calculate         (Queue input);            //takes queue as input and performs the operations indicated in the input string
+int     GetOperatorWeight (string op);              //here is where I assign precedences to the operators. This determines in what order they will be executed in InfixToPostFix()
+Queue   InfixToPostfix    (Queue input);            //converts infix expression to postfix so that the calculate method can evaluate it
+Queue   ParseInputString  (string inputString);     //splits the input string into substrings based on the spaces. ie) "12 14 +" becomes |12|14|+|
+string  GetInputString    ();                       //allows user to input a string. This string must be in infix or postfix notation
 
 /***************************************************************************
 main method. gives the procedure each input string will follow in order to evaluate
@@ -44,7 +62,7 @@ postconditions: returns true if it is an operator. False if not
 ******************************************************************************************************/
 bool IsOperator(string character){
   bool retValue = true;
-  string ops = "+-/*%()";
+  string ops = "+-/*%()^";
   if(ops.find(character) == string::npos){
     retValue = false;
   }
@@ -111,6 +129,9 @@ int Calculate(Queue input){
       if(op == "%"){
         c = b%a;
       }
+      if(op == "^"){
+        c = pow(b, a);
+      }
      stack.Push(to_string(c));
       }
   }
@@ -139,7 +160,7 @@ int GetOperatorWeight(string op){
   if(op == "*" || op == "/"){
     weight = 1;
   }
-  if(op == "%"){
+  if(op == "%" || op == "^"){
     weight = 2;
   }
   
