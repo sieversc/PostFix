@@ -7,6 +7,10 @@ linked-list implementation, there is no upper limit on the number
 of elements that the stack can contain.
 
 Written by Mikeyg
+    ^ left this intentionally. I didn't edit it, just downloaded from canvas
+
+Chris Sievers
+CSC220 DataStructures - Dr. Goldweber
 ------------------------------------------------------------------*/
 
 #include <string>

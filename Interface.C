@@ -1,11 +1,13 @@
-/*------------------------------------------------------------------
-Implements linked list queues and stacks to perform mathematical operations. 
+/*---------------------------------------------------------------------------------------------------
+Implements linked list queues and stacks to perform mathematical operations. Takes input from the user
+in postfix and infix notation. Outputs a single integer.
 Supports:
   > +,-,*,/,%,^
     > + addition
     > - subtraction
     > * multiplication
     > / division
+      > performs integer division. Will not show the remainder
     > % modulo
     > ^ exponentiation
   > parentheses
@@ -19,7 +21,9 @@ Supports:
 
 
 written by Chris Sievers
-------------------------------------------------------------------*/
+
+CSC 220 Data Structures - Dr. Goldweber
+---------------------------------------------------------------------------------------------------*/
 
 #include <iostream>
 #include <string>
@@ -141,7 +145,7 @@ int Calculate(Queue input){
 }
 
 /****************************************************************************************************
-here is where I assign precedences to the operators. This determines in what order they will be executed in InfixToPostFix(). This is also used by SameCharType
+here is where I assign precedences to the operators. This determines in what order they will be executed in InfixToPostFix(). This is also used by SameCharType()
 to compare 2 strings
 
 preconditions: none any string is accepted and will return a number
@@ -273,10 +277,11 @@ Queue ParseInputString(string inputString){
       > Look at each element in the input string.
       > for any given element, if the next character is of a different type --> enqueue it
         > so 3+5 gets enqueued as |3|+|5|
-      > if they are the same weight, we have a multiple digit integer. loop through and get a substring
-        with all the digits of this integer then enqueue the whole substring
-      > Note parentheses are not a problem here because SameCharType() compares the weights of each character
-        and parentheses are of weight -1, integers are -2, all other operators > -1
+      > if they are the same weight, we have a multiple digit integer. Keep checking the following characters 
+        until you find a character of a different type and get a substring
+        with all the digits of this integer then enqueue the whole substring as one queue entry
+      > Note parentheses are not a problem here even though I've defined them as operators because SameCharType() 
+        compares the weights of each character and parentheses are of weight -1, integers are -2, all other operators > -1
     *****************************************************************************/
     for(int i = 0; i < inputString.length(); i++){
       elem = inputString.at(i);
@@ -309,6 +314,7 @@ Queue ParseInputString(string inputString){
       }
     }
   }
+  
 //This is a much simpler parsing job. this takes a string delimited by spaces and breaks it up that way
   else{
     while(!inputString.empty()){
