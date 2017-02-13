@@ -57,6 +57,9 @@ int main () {
    //parse the equation, convert it to infix notation, then evaluate. Note if inputString is already in infix, it will still calculate just fine
   cout << endl << "=  " << Calculate(InfixToPostfix(ParseInputString(inputString))) << endl;
 
+
+
+
 }
 
 /*****************************************************************************************************
@@ -149,7 +152,7 @@ int Calculate(Queue input){
 }
 
 /****************************************************************************************************
-here is where I assign precedences to the operators. This determines in what order they will be executed in InfixToPostFix(). This is also used by SameCharType()
+Assign precedences to the operators. This determines in what order they will be executed in InfixToPostFix(). This is also used by SameCharType()
 to compare 2 strings
 
 preconditions: none any string is accepted and will return a number
@@ -319,7 +322,7 @@ Queue ParseInputString(string inputString){
         int j = 1;  //let's make a new index 
         nextElem = inputString.at(i+j); //nextElem starts with the character adjacent to element in question
 
-        while(i+j < inputString.length() && SameCharType(elem, nextElem)){
+        while(i+j+1 < inputString.length() && SameCharType(elem, nextElem)){
           length = j+1;   //increase the length as condition continues to be met and j is incremented
           j++;
           nextElem = inputString.at(i+j); //grab the next element 
