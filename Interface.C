@@ -67,6 +67,7 @@ postconditions: returns true if it is an operator. False if not
 bool IsOperator(string character){
   bool retValue = true;
   string ops = "+-/*%()^";
+
   if(ops.find(character) == string::npos){
     retValue = false;
   }
@@ -95,9 +96,9 @@ postconditions: all operations performed and returns a single integer
 int Calculate(Queue input){
   int retValue;
  
-  bool foo;
-  Stack stack;
-  string character;
+  bool foo;  
+  Stack stack;      //used as an intermediary between input string and integer output
+  string character; //place to store dequeued elements
 
   while(!input.IsEmpty()){
     foo = input.Dequeue(character);
@@ -107,17 +108,20 @@ int Calculate(Queue input){
       stack.Push(character);
     }
 
-    //if not an integer, it's an operator
-    //pop twice and perform the operation. push result back onto stack
+    /*****
+      if not an integer, it's an operator
+      pop twice and perform the operation. push result back onto stack
+    *****/
     else{
-      string op = character;
-      int c;
+      string op = character;  //store the operator in another variable
+      int c;                  //this will be our result. what we push back onto the stack
       foo = stack.Pop(character);
       int a = stoi(character);
 
       foo = stack.Pop(character);
       int b = stoi(character);
 
+      //handles all the different cases for each operator
       if(op == "+"){
         c = a + b;    
      }
@@ -136,12 +140,12 @@ int Calculate(Queue input){
       if(op == "^"){
         c = pow(b, a);
       }
-     stack.Push(to_string(c));
+     stack.Push(to_string(c)); //whatever the operation, push the result
       }
   }
-  foo = stack.Pop(character);
-  retValue = stoi(character);
-  return retValue;
+  foo = stack.Pop(character);   //get the top of the stack
+  retValue = stoi(character);   //convert to integer
+  return retValue;              //return the top of the stack(the result) as an integer
 }
 
 /****************************************************************************************************
@@ -186,10 +190,10 @@ Preconditions: takes a string in Infix notation
 Postconditions: outputs string in Postfix notation
 ******************************************************************************************************/
 Queue InfixToPostfix(Queue input){
-  Queue postfix;
-  string token;
-  bool foo;
-  Stack stack;
+  Queue postfix;  //queue that will hold the postfix conversion
+  string token;   //dequeued elements from input queue
+  bool foo;       //dummy boolean
+  Stack stack;    //intermediary stack between input and output queues
 
   while(!input.IsEmpty()){
     foo = input.Dequeue(token);
@@ -198,27 +202,31 @@ Queue InfixToPostfix(Queue input){
     if(!IsOperator(token)){
       postfix.Enqueue(token);
     }
+
     else{
       //we want to push ( onto the stack as if it were empty. this is important because order of operation depends on this
       if(stack.IsEmpty() || token == "("){
         stack.Push(token);
       }
 
-      //if stack isn't empty, comparisons between incoming operator and operators on stack already need to be made
+      //if stack isn't empty, comparisons between incoming operator and operators already on stack need to be made as specified above
       else{
-        string top;
-      //keep an eye out for ) it needs to be handled before anything else
+
+        string top; //place to store the value of the top of the stack. sometimes popped from stack sometimes just top()
+        
+        //keep an eye out for ) it needs to be handled before anything else
         if(token == ")"){
           foo = stack.Pop(top);
+
           while(top != "("){
-            
             postfix.Enqueue(top);
             foo = stack.Pop(top);
           }
         }
 
         else{
-          foo = stack.Top(top); 
+          foo = stack.Top(top);
+          //grab the weights of each operator 
           int tokenWeight = GetOperatorWeight(token);
           int topWeight = GetOperatorWeight(top);
 
@@ -228,7 +236,7 @@ Queue InfixToPostfix(Queue input){
           if(tokenWeight == topWeight){
             foo = stack.Pop(top);
             postfix.Enqueue(top);
-            //stack.Push(token);
+            stack.Push(token);
           }
 
           if(tokenWeight < topWeight){
@@ -285,36 +293,48 @@ Queue ParseInputString(string inputString){
     *****************************************************************************/
     for(int i = 0; i < inputString.length(); i++){
       elem = inputString.at(i);
-      nextElem = "null";
 
+      /*
+        nextElem is going to hold the next element of the list(if there is one)
+        initialize it to something that won't be in the inputString
+        a string of letters should do the job - we won't be entering words into a calculator
+      */
+      nextElem = "null";    
+
+      //make sure you're not about to grab an element in a location longer than the inputString
+      //prevents null pointer
       if(i+1 < inputString.length()){
         nextElem = inputString.at(i+1);
       }
 
+      //if element in question is not the same type of character as its predecessor (integer followed by an operator or vice versa)
+      //or it is the end of the inputString, enqueue the element
       if(!SameCharType(elem, nextElem) || nextElem == "null"){
         parsedQ.Enqueue(elem);
       }
 
+      // multiple digit integer. Keep checking the following characters until you find a character of a different type
       if(SameCharType(elem, nextElem) && nextElem != "null"){
-        int length;
-        int j = 1;
-        nextElem = inputString.at(i+j);
+        int length; //substring method in c++ needs the length of the substring you want to create
+        int j = 1;  //let's make a new index 
+        nextElem = inputString.at(i+j); //nextElem starts with the character adjacent to element in question
 
         while(i+j < inputString.length() && SameCharType(elem, nextElem)){
-          length = j+1;
+          length = j+1;   //increase the length as condition continues to be met and j is incremented
           j++;
-          nextElem = inputString.at(i+j);
+          nextElem = inputString.at(i+j); //grab the next element 
         }
-        string token = inputString.substr(i, length);
+
+        string token = inputString.substr(i, length); //now lets cut out the appropriate substring from inputString
         parsedQ.Enqueue(token);
 
-        /*  pick up in the for loop indexed by i just after the multiple digit integer we just enqueued
-            -1 because this is the end of the for loop indexed by i and will increment immediately after. */
+            //pick up in the for loop indexed by i just after the multiple digit integer we just enqueued
+            //-1 because this is the end of the for loop indexed by i and will increment immediately after.
         i = length + i - 1;     
       }
     }
   }
-  
+
 //This is a much simpler parsing job. this takes a string delimited by spaces and breaks it up that way
   else{
     while(!inputString.empty()){
@@ -351,5 +371,3 @@ string GetInputString(){
   getline(cin, response);
   return response;
 }
-
-
