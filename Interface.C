@@ -34,32 +34,29 @@ CSC 220 Data Structures - Dr. Goldweber
 
 using namespace std;
 
-bool    IsOperator        (string character);       //will check a single string character to see if it is an operator or not
-bool    SameCharType      (string a, string b);     //checks whether two strings are both operators or both integers. Compares the weight of both characters
-int     Calculate         (Queue input);            //takes queue as input and performs the operations indicated in the input string
-int     GetOperatorWeight (string op);              //here is where I assign precedences to the operators. This determines in what order they will be executed in InfixToPostFix()
-Queue   InfixToPostfix    (Queue input);            //converts infix expression to postfix so that the calculate method can evaluate it
-Queue   ParseInputString  (string inputString);     //splits the input string into substrings based on the spaces. ie) "12 14 +" becomes |12|14|+|
-string  GetInputString    ();                       //allows user to input a string. This string must be in infix or postfix notation
+bool    IsOperator(string character);         //check a single string character to see if it is an operator or not
+bool    SameCharType(string a, string b);     //checks whether two strings are both operators or both integers. Compares the weight of both characters
+int     Calculate(Queue input);               //takes queue as input and performs the operations indicated in the input string
+int     GetOperatorWeight(string op);         //assign precedences to the operators. This determines in what order they will be executed in InfixToPostFix()
+Queue   InfixToPostfix(Queue input);          //converts infix expression to postfix so that the calculate method can evaluate it
+Queue   ParseInputString(string inputString); //splits the input string into substrings based on the spaces. ie) "12 14 +" becomes |12|14|+|
+string  GetInputString();                     //allows user to input a string. This string must be in infix or postfix notation
 
 /***************************************************************************
-main method. gives the procedure each input string will follow in order to evaluate
-the expression.
+main method. gives the procedure each input string will follow in order to evaluate. 
+  > Get a string from terminal 
+  > parse the string. Break it up into its components and store as a queue of substrings
+  > convert it to postfix notation (if necessary)
+  > perform the indicated operations
+  > print the result
 ****************************************************************************/
 
 int main () {
 
   // Get a string from the user to evaluate
   cout << "Enter equation to evaluate: " << endl;
-
-  string inputString = GetInputString();
   
-   //parse the equation, convert it to infix notation, then evaluate. Note if inputString is already in infix, it will still calculate just fine
-  cout << endl << "=  " << Calculate(InfixToPostfix(ParseInputString(inputString))) << endl;
-
-
-
-
+  cout << endl << "=  " << Calculate(InfixToPostfix(ParseInputString(GetInputString()))) << endl;
 }
 
 /*****************************************************************************************************
@@ -116,8 +113,8 @@ int Calculate(Queue input){
       pop twice and perform the operation. push result back onto stack
     *****/
     else{
-      string op = character;  //store the operator in another variable
-      int c;                  //this will be our result. what we push back onto the stack
+      string op = character;  //store the operator in another variable so more tokens can be popped
+      int c;                  //this will be the result. what we push back onto the stack
       foo = stack.Pop(character);
       int a = stoi(character);
 
@@ -146,7 +143,7 @@ int Calculate(Queue input){
      stack.Push(to_string(c)); //whatever the operation, push the result
       }
   }
-  foo = stack.Pop(character);   //get the top of the stack
+  foo = stack.Pop(character);   //get the top of the stack (what was just pushed on as a result of the operations performed)
   retValue = stoi(character);   //convert to integer
   return retValue;              //return the top of the stack(the result) as an integer
 }
@@ -207,7 +204,7 @@ Queue InfixToPostfix(Queue input){
     }
 
     else{
-      //we want to push ( onto the stack as if it were empty. this is important because order of operation depends on this
+      //push "(" onto the stack as if it were empty. this is important because order of operation depends on this
       if(stack.IsEmpty() || token == "("){
         stack.Push(token);
       }
@@ -217,7 +214,7 @@ Queue InfixToPostfix(Queue input){
 
         string top; //place to store the value of the top of the stack. sometimes popped from stack sometimes just top()
         
-        //keep an eye out for ) it needs to be handled before anything else
+        //keep an eye out for ")" it needs to be handled before anything else
         if(token == ")"){
           foo = stack.Pop(top);
 
@@ -265,7 +262,7 @@ Queue InfixToPostfix(Queue input){
     postfix.Enqueue(token);
   }
 
-  return postfix;
+  return postfix; //parsed queue
 }
 
 /*****************************************************************************************************
