@@ -319,13 +319,18 @@ Queue ParseInputString(string inputString){
 
     /******************************************************************
       > Look at each element in the input string.
-      > for any given element, if the next character is of a different type --> enqueue it
-        > so 3+5 gets enqueued as |3|+|5|
-      > if they are the same weight, we have a multiple digit integer. Keep checking the following characters 
+      > for any given element, if the next character is of a different 
+      	type --> enqueue it
+      > so 3+5 gets enqueued as |3|+|5|
+      > if they are the same weight, we have a multiple digit integer. Keep checking 
+      	the following characters 
         until you find a character of a different type and get a substring
-        with all the digits of this integer then enqueue the whole substring as one queue entry
-      > Note parentheses are not a problem here even though I've defined them as operators because SameCharType() 
-        compares the weights of each character and parentheses are of weight -1, integers are -2, all other operators > -1
+        with all the digits of this integer then enqueue the whole substring as 
+        one queue entry
+      > Note parentheses are not a problem here even though I've defined them as 
+      	operators because SameCharType() 
+        compares the weights of each character and parentheses are of weight -1, 
+        integers are -2, all other operators > -1
     *****************************************************************/
     for(int i = 0; i < inputString.length(); i++){
       elem = inputString.at(i);
